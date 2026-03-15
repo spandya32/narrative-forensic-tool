@@ -1,0 +1,28 @@
+# Narrative Analysis Prompt
+
+You are analyzing a document for structural narrative patterns.
+
+The goal is to produce a structured markdown analysis following the schema defined in DATA_SCHEMA.md.
+
+Analyze the document and extract:
+
+1. Key claims
+2. Evidence density
+3. Hedging language
+4. Framing patterns
+5. Citation network
+6. Narrative entropy estimate
+7. Narrative compression score
+8. Sentiment asymmetry
+9. Narrative propagation indicators
+
+Important rules:
+
+- Follow the exact markdown schema.
+- Do not invent information.
+- If a metric cannot be computed precisely, provide an estimate based on textual analysis.
+- Maintain consistent formatting across all documents.
+
+The output should be saved as:
+
+analysis/{document_name}.md
