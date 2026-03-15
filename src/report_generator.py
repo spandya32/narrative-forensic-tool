@@ -327,6 +327,57 @@ def _build_propagation_section(
     return "\n\n".join(parts) if parts else "_No propagation data available._"
 
 
+def _build_salience_section(salience_result=None) -> str:
+    if salience_result is None:
+        return "_Not calculated._"
+
+    # Lede inversion bar (remap -1..+1 to 0..1 for display)
+    inv_display = (salience_result.lede_inversion_score + 1) / 2
+
+    buried = salience_result.buried_facts[:5]
+    buried_lines = []
+    for f in buried:
+        tag = " ⟵ cited" if f.is_cited else ""
+        buried_lines.append(
+            f"- Position **{f.position:.0%}** through doc  |  "
+            f"Pressure: `{f.contextual_pressure:.3f}`  |  "
+            f"Attribution depth: `{f.attribution_depth}`{tag}  \n"
+            f"  > _{f.sentence[:180]}_"
+        )
+    buried_block = "\n\n".join(buried_lines) or "_None detected._"
+
+    fbf = salience_result.framing_before_fact_examples[:3]
+    fbf_lines = []
+    for ex in fbf:
+        fbf_lines.append(
+            f"- **Framing** (at {ex['claim_position_pct']}%):  \n"
+            f"  > _{ex['framing']}_  \n"
+            f"  **→ Claim:**  \n"
+            f"  > _{ex['claim']}_"
+        )
+    fbf_block = "\n\n".join(fbf_lines) or "_None detected._"
+
+    laundering = salience_result.laundering_examples[:3]
+    laundering_block = (
+        "\n\n".join(f"> _{s}_" for s in laundering)
+        if laundering else "_None detected._"
+    )
+
+    return (
+        f"Lede Inversion Score: **{salience_result.lede_inversion_score:+.4f}** "
+        f"({salience_result.lede_inversion_label})\n\n"
+        f"Evidence position in document: **{salience_result.mean_evidentiary_position:.1%}**  \n"
+        f"Framing position in document:  **{salience_result.mean_framing_position:.1%}**\n\n"
+        f"Buried key facts detected: **{len(salience_result.buried_facts)}**  \n"
+        f"High-pressure claim sentences: **{salience_result.high_pressure_claim_count}**  \n"
+        f"Max attribution laundering depth: **{salience_result.max_laundering_depth}**  \n"
+        f"Framing-before-fact sequences: **{salience_result.framing_before_fact_count}**\n\n"
+        f"### Top Buried / High-Pressure Claims\n\n{buried_block}\n\n"
+        f"### Framing-Before-Fact Sequences\n\n{fbf_block}\n\n"
+        f"### Attribution Laundering Examples\n\n{laundering_block}"
+    )
+
+
 def _build_diff_section(diff_result) -> str:
     if diff_result is None:
         return "_Version comparison not performed._"
@@ -362,6 +413,8 @@ def generate_report(
     phrase_clusters=None,
     mutation_result=None,
     propagation_result=None,
+    # Phase 5
+    salience_result=None,
     notes: str = "",
 ) -> str:
     """
@@ -420,6 +473,11 @@ def generate_report(
             propagation_result=propagation_result,
             citation_report=citation_report,
         ),
+    ))
+
+    parts.append(_section(
+        "Information Hierarchy",
+        _build_salience_section(salience_result),
     ))
 
     if diff_result is not None:

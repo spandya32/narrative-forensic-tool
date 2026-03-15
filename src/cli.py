@@ -75,6 +75,7 @@ def _run_pipeline(preprocessed, source_id: str, sections=None) -> dict:
     from compression_detector import detect_compression
     from phrase_extractor import extract_phrases
     from phrase_clusterer import cluster_phrases
+    from salience_analyzer import analyze_salience
 
     print("[NFT] Running analysis …")
     citations   = extract_citations(preprocessed.sentences, source_id=source_id)
@@ -89,6 +90,7 @@ def _run_pipeline(preprocessed, source_id: str, sections=None) -> dict:
     compression = detect_compression(preprocessed, source_id=source_id)
     phrases     = extract_phrases(preprocessed.sentences, source_id=source_id)
     clusters    = cluster_phrases(phrases)
+    salience    = analyze_salience(preprocessed, source_id=source_id)
 
     return {
         "citations": citations, "hedging": hedging,
@@ -96,13 +98,14 @@ def _run_pipeline(preprocessed, source_id: str, sections=None) -> dict:
         "framing": framing,     "entropy": entropy,
         "network": network,     "compression": compression,
         "phrases": phrases,     "clusters": clusters,
+        "salience": salience,
     }
 
 
 def _print_results(p: dict) -> None:
     d, h, c, s = p["density"], p["hedging"], p["citations"], p["sentiment"]
     fr, en, net, comp = p["framing"], p["entropy"], p["network"], p["compression"]
-    phrases, clusters = p["phrases"], p["clusters"]
+    phrases, clusters, sal = p["phrases"], p["clusters"], p["salience"]
 
     _print_section(
         "EVIDENCE DENSITY",
@@ -155,6 +158,16 @@ def _print_results(p: dict) -> None:
             f"Extracted : {phrases.phrase_count}  |  Clusters: {clusters.n_clusters}\n"
             + "\n".join(f"  `{p.text}`  (freq={p.frequency})" for p in top),
         )
+    _print_section(
+        "INFORMATION HIERARCHY",
+        f"Lede inversion      : {sal.lede_inversion_score:+.4f}  ({sal.lede_inversion_label})\n"
+        f"Evidence position   : {sal.mean_evidentiary_position:.1%} through document\n"
+        f"Framing position    : {sal.mean_framing_position:.1%} through document\n"
+        f"Buried key facts    : {len(sal.buried_facts)}\n"
+        f"High-pressure claims: {sal.high_pressure_claim_count}\n"
+        f"Max laundering depth: {sal.max_laundering_depth}\n"
+        f"Framing-before-fact : {sal.framing_before_fact_count} sequences",
+    )
     if s.entity_profiles:
         lines = [
             f"  {p.entity_text:30s}  [{p.entity_label}]  "
@@ -187,6 +200,7 @@ def _save_report(output_path: str, meta, preprocessed, p: dict | None) -> None:
         compression_result=p["compression"] if p else None,
         phrase_result=p["phrases"]          if p else None,
         phrase_clusters=p["clusters"]       if p else None,
+        salience_result=p["salience"]       if p else None,
     )
     save_report(report, output_path)
 

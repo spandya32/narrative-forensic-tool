@@ -27,6 +27,7 @@ The system analyzes structural features such as:
 - citation echo chambers
 - narrative compression
 - narrative entropy
+- information hierarchy manipulation (lede burial, framing-before-fact, attribution laundering)
 
 ---
 

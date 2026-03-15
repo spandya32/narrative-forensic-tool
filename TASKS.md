@@ -80,7 +80,25 @@ Narrative propagation report.
 
 ---
 
-# Phase 5: Dataset Construction
+# Phase 5: Information Hierarchy Analysis
+
+Goal: detect lede burial and architectural narrative manipulation.
+
+Tasks:
+
+- Positional salience scoring (key facts buried late in document)
+- Contextual pressure indexing (hedge/attribution density around claims)
+- Framing-before-fact sequence detection
+- Lede inversion measurement (framing position vs evidence position)
+- Attribution laundering depth detection
+
+Output:
+
+Information Hierarchy section in each report.
+
+---
+
+# Phase 6: Dataset Construction
 
 Goal: build a structured dataset of narrative analyses.
 
@@ -88,7 +106,7 @@ Tasks:
 
 - generate markdown reports for each PDF
 - store results in analysis folder
-- build analysis index
+- build analysis index (INDEX.md)
 - compute metrics across dataset
 
 Output:
@@ -97,7 +115,7 @@ Structured dataset for research.
 
 ---
 
-# Phase 6: Visualization (Future)
+# Phase 7: Visualization (Future)
 
 Possible future tasks:
 

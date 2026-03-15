@@ -1,6 +1,6 @@
 # Narrative Forensics — Analysis Index
 
-Generated: 2026-03-15 15:29  |  Documents: 4
+Generated: 2026-03-15 18:35  |  Documents: 4
 
 
 ---

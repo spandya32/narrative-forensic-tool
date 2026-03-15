@@ -126,6 +126,43 @@ Example:
 
 ---
 
+# Information Hierarchy
+
+Detects "lede burial" — key facts that are technically present and cited,
+but architecturally hidden by surrounding context.
+
+Lede Inversion Score:
+  Positive = framing appears after evidence (neutral/normal)
+  Negative = framing appears before evidence (manipulation signal)
+
+Mean Evidentiary Position:
+  Where cited claim sentences appear on average (0% = top, 100% = bottom)
+
+Mean Framing Position:
+  Where attribution/framing sentences appear on average
+
+Buried key facts detected:
+  Claim sentences that are late in the document AND under high contextual pressure
+
+High-pressure claim sentences:
+  Claims surrounded by dense hedging and attribution language
+
+Max attribution laundering depth:
+  Deepest nesting of "X said that Y found that Z claimed that..."
+
+Framing-before-fact sequences:
+  Count of cases where interpretive framing directly precedes a factual claim
+
+## Algorithms Applied
+
+1. Positional Salience Scoring  — key cited facts appearing late in document
+2. Contextual Pressure Index    — hedge/attribution density around each claim
+3. Framing-Before-Fact          — attribution frames directly preceding claims
+4. Lede Inversion               — evidentiary position vs framing position
+5. Attribution Laundering Depth — nested attribution chains on single facts
+
+---
+
 # Notes
 
 Optional observations.
