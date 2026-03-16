@@ -422,6 +422,106 @@ Entity Sentiment Summary _(Scorer: lexicon)_:
 
 ---
 
+# Bias Patterns
+
+Minimization instances: **31**  (high severity: **0**)  
+Scope minimizer hits: **19**  
+Scrutiny variance: **5554.99**  
+Asymmetric scrutiny pairs: **10**
+
+### Concession-Reversal Minimization
+
+- **[MEDIUM]** concession via `although` — harm: `violence`, reversal: `generally`, `generally`, scope: `some`, `some`  
+  > _the  lower  castes,  and 
+other  religions;  (2)  that  although  there  are  a  number  of  things  that  have  been 
+characteristic  of  many  Hindus  over  the  ages  (the  worship  of  several  gods, 
+reincarnation, _
+
+- **[MEDIUM]** concession via `though` — harm: `killed`, reversal: `generally`, scope: `certain`, `some`  
+  > _People have been killed in
+
+India because they did or did not sacrifice animals, or had sex with the wrong 
+women,  or  disregarded  the  Vedas,  or  even  made  use  of  the  wrong  sacred 
+texts,  but no  one was  impa_
+
+- **[MEDIUM]** concession via `though` — harm: `destroy`, reversal: `just`, scope: `just`  
+  > _The  Rig 
+Veda  warns the sacrificer to keep "the long-tongued dog"  away (9.101. I), and 
+the  lawbook of Manu  (7,21) warns that if the  king  does not enforce  the  law, 
+crows will eat the sacrificial  cakes  and  do_
+
+- **[MEDIUM]** concession via `though` — harm: `violence`, scope: `occasionally`  
+  > _But  though  the  Vedic  people  also  occasionally  ate 
+cows  (the  female  of  the  species) ,  cows  soon  became,  for  most  Hindus, 
+cultural  symbols  of  non-violence  and  generosity,  through  the  natural 
+me_
+
+- **[MEDIUM]** concession via `though` — harm: `kill`, scope: `some`, `not all`  
+  > _Though humans served as mere pawns 
+in these  cosmic  battles,  it  was  in their  interest to  serve  the  gods,  for  the
+
+antigods and ogres would try to kill humans (in order to divert the sacrifice 
+from the gods), _
+
+### Scope Minimizers on Harmful Events
+
+- Harm: `violence`  |  Minimizer: `particular`  
+  > _The  sociologist  M.  N.  Srinivas, 
+in  1952,  coined  the  useful  ternl 
+"Sanskritization"  to  describe  the  way  that  Vedic  social  values,  Vedic  ritual 
+forms,  and  Sanskrit  learning  seep  into  local  popu_
+
+- Harm: `violence`  |  Minimizer: `only`  
+  > _Violence and  tolerance also  interact  in attitudes  not  only  to  other religions  but 
+between  the  upper  and  lower  castes,  between  men  and  women,  and  between 
+humans  and  animals._
+
+- Harm: `violence`, `violence`, `kill`  |  Minimizer: `particular`, `just`, `few`  
+  > _But  wherever  the 
+evidence  allows,  I will  organize  each  chapter  around  these  central  themes, 
+(NON)VIOLENCE 
+In  the  Introduction  (chapter  1),  I  spell  out  the  assumptions  behind  my 
+attention  to  hi_
+
+- Harm: `violence`  |  Minimizer: `some`, `some`  
+  > _the  lower  castes,  and 
+other  religions;  (2)  that  although  there  are  a  number  of  things  that  have  been 
+characteristic  of  many  Hindus  over  the  ages  (the  worship  of  several  gods, 
+reincarnation, _
+
+### Asymmetric Scrutiny
+
+- 'vedic' receives 30.3× more critical scrutiny than 'lemuria'  
+  Scrutiny scores: `248.22` vs `8.19` (ratio 30.3×)
+
+- 'vedic' receives 29.2× more critical scrutiny than 'mohenjo-daro'  
+  Scrutiny scores: `248.22` vs `8.51` (ratio 29.2×)
+
+- 'indus' receives 28.9× more critical scrutiny than 'lemuria'  
+  Scrutiny scores: `236.67` vs `8.19` (ratio 28.9×)
+
+- 'indus' receives 27.8× more critical scrutiny than 'mohenjo-daro'  
+  Scrutiny scores: `236.67` vs `8.51` (ratio 27.8×)
+
+- 'india' receives 26.8× more critical scrutiny than 'lemuria'  
+  Scrutiny scores: `219.05` vs `8.19` (ratio 26.8×)
+
+### Entity Scrutiny Profiles
+
+- **vedic** — mentions: 30, scrutiny: `248.22`, hedge density: `0.999`, negative density: `0.161`
+- **indus** — mentions: 28, scrutiny: `236.67`, hedge density: `1.058`, negative density: `0.102`
+- **india** — mentions: 177, scrutiny: `219.05`, hedge density: `0.791`, negative density: `0.153`
+- **veda** — mentions: 20, scrutiny: `195.01`, hedge density: `0.888`, negative density: `0.122`
+- **brahmin** — mentions: 84, scrutiny: `193.97`, hedge density: `1.212`, negative density: `0.164`
+- **hinduism** — mentions: 14, scrutiny: `165.25`, hedge density: `1.042`, negative density: `0.074`
+- **sanskrit** — mentions: 67, scrutiny: `123.00`, hedge density: `0.901`, negative density: `0.150`
+- **sanskrit** — mentions: 45, scrutiny: `123.00`, hedge density: `0.901`, negative density: `0.150`
+- **sanskrit** — mentions: 14, scrutiny: `123.00`, hedge density: `0.901`, negative density: `0.150`
+- **brahmins** — mentions: 65, scrutiny: `91.36`, hedge density: `1.265`, negative density: `0.185`
+
+
+---
+
 # Information Hierarchy
 
 Lede Inversion Score: **+0.5021** (normal (evidence before framing))
@@ -492,4 +592,4 @@ _None detected._
 # Notes
 
 Generated by Narrative Forensics Tool  
-Date: 2026-03-15 16:10
+Date: 2026-03-16 14:25

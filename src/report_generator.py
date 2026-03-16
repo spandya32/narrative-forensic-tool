@@ -327,6 +327,93 @@ def _build_propagation_section(
     return "\n\n".join(parts) if parts else "_No propagation data available._"
 
 
+def _build_bias_section(bias_result=None, llm_result=None) -> str:
+    if bias_result is None:
+        return "_Not calculated._"
+
+    # Minimization instances
+    min_lines = []
+    for m in bias_result.minimization_instances[:5]:
+        terms = []
+        if m.harm_terms:
+            terms.append(f"harm: `{'`, `'.join(m.harm_terms[:3])}`")
+        if m.reversal_terms:
+            terms.append(f"reversal: `{'`, `'.join(m.reversal_terms[:3])}`")
+        if m.scope_terms:
+            terms.append(f"scope: `{'`, `'.join(m.scope_terms[:3])}`")
+        min_lines.append(
+            f"- **[{m.severity.upper()}]** concession via `{m.concession_term}` — "
+            + ", ".join(terms) + f"  \n"
+            f"  > _{m.sentence[:220]}_"
+        )
+    min_block = "\n\n".join(min_lines) or "_None detected._"
+
+    # Scope minimizers
+    scope_lines = []
+    for s in bias_result.scope_minimizer_sentences[:4]:
+        scope_lines.append(
+            f"- Harm: `{'`, `'.join(s['harm_terms'][:3])}`  |  "
+            f"Minimizer: `{'`, `'.join(s['scope_terms'][:3])}`  \n"
+            f"  > _{s['sentence'][:220]}_"
+        )
+    scope_block = "\n\n".join(scope_lines) or "_None detected._"
+
+    # Asymmetric scrutiny
+    asym_lines = []
+    for p in bias_result.asymmetry_pairs[:5]:
+        asym_lines.append(
+            f"- {p.signal}  \n"
+            f"  Scrutiny scores: `{p.score_high:.2f}` vs `{p.score_low:.2f}` (ratio {p.ratio:.1f}×)"
+        )
+    asym_block = "\n\n".join(asym_lines) or "_No significant asymmetry detected._"
+
+    # Scrutiny profiles table
+    profile_lines = []
+    for pr in bias_result.scrutiny_profiles[:10]:
+        profile_lines.append(
+            f"- **{pr.entity}** — mentions: {pr.mention_count}, "
+            f"scrutiny: `{pr.scrutiny_score:.2f}`, "
+            f"hedge density: `{pr.hedge_density:.3f}`, "
+            f"negative density: `{pr.negative_density:.3f}`"
+        )
+    profile_block = "\n".join(profile_lines) or "_No entities with sufficient mentions._"
+
+    # LLM section
+    llm_block = ""
+    if llm_result and llm_result.available:
+        llm_findings = []
+        for f in llm_result.findings[:5]:
+            llm_findings.append(
+                f"**[{f.severity.upper()}] {f.manipulation_type}**  \n"
+                f"{f.explanation}  \n"
+                f"> _{f.passage[:200]}_"
+            )
+        assessment = (
+            f"\n\n**Overall Assessment:** {llm_result.overall_assessment}"
+            if llm_result.overall_assessment else ""
+        )
+        llm_block = (
+            f"\n\n### LLM Interpretation _(model: {llm_result.model_used})_\n\n"
+            + ("\n\n".join(llm_findings) or "_No manipulation detected in flagged passages._")
+            + assessment
+        )
+    elif llm_result and llm_result.error and "not set" not in llm_result.error:
+        llm_block = f"\n\n### LLM Interpretation\n\n_Unavailable: {llm_result.error}_"
+
+    return (
+        f"Minimization instances: **{bias_result.minimization_count}**  "
+        f"(high severity: **{bias_result.high_severity_count}**)  \n"
+        f"Scope minimizer hits: **{bias_result.scope_minimizer_count}**  \n"
+        f"Scrutiny variance: **{bias_result.scrutiny_variance:.2f}**  \n"
+        f"Asymmetric scrutiny pairs: **{len(bias_result.asymmetry_pairs)}**\n\n"
+        f"### Concession-Reversal Minimization\n\n{min_block}\n\n"
+        f"### Scope Minimizers on Harmful Events\n\n{scope_block}\n\n"
+        f"### Asymmetric Scrutiny\n\n{asym_block}\n\n"
+        f"### Entity Scrutiny Profiles\n\n{profile_block}"
+        + llm_block
+    )
+
+
 def _build_salience_section(salience_result=None) -> str:
     if salience_result is None:
         return "_Not calculated._"
@@ -415,6 +502,9 @@ def generate_report(
     propagation_result=None,
     # Phase 5
     salience_result=None,
+    # Phase 6
+    bias_result=None,
+    llm_result=None,
     notes: str = "",
 ) -> str:
     """
@@ -475,6 +565,10 @@ def generate_report(
         ),
     ))
 
+    parts.append(_section(
+        "Bias Patterns",
+        _build_bias_section(bias_result, llm_result),
+    ))
     parts.append(_section(
         "Information Hierarchy",
         _build_salience_section(salience_result),

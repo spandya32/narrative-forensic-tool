@@ -115,7 +115,24 @@ Structured dataset for research.
 
 ---
 
-# Phase 7: Visualization (Future)
+# Phase 7: LLM-Assisted Bias Detection
+
+Goal: detect malicious intent and systematic bias using statistical + LLM analysis.
+
+Tasks:
+
+- Concession-reversal minimization detection ("although X, he was generally tolerant")
+- Scope minimizer detection ("few temples", "only brahmins were affected")
+- Asymmetric scrutiny scoring per entity/group
+- LLM interpretation layer via Claude API (optional, requires API key)
+
+Output:
+
+Bias Patterns section in each report. LLM findings when API key is set.
+
+---
+
+# Phase 8: Visualization (Future)
 
 Possible future tasks:
 

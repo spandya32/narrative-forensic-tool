@@ -76,6 +76,8 @@ def _run_pipeline(preprocessed, source_id: str, sections=None) -> dict:
     from phrase_extractor import extract_phrases
     from phrase_clusterer import cluster_phrases
     from salience_analyzer import analyze_salience
+    from bias_detector import detect_bias
+    from llm_analyzer import analyze_with_llm
 
     print("[NFT] Running analysis …")
     citations   = extract_citations(preprocessed.sentences, source_id=source_id)
@@ -91,6 +93,8 @@ def _run_pipeline(preprocessed, source_id: str, sections=None) -> dict:
     phrases     = extract_phrases(preprocessed.sentences, source_id=source_id)
     clusters    = cluster_phrases(phrases)
     salience    = analyze_salience(preprocessed, source_id=source_id)
+    bias        = detect_bias(preprocessed, source_id=source_id)
+    llm         = analyze_with_llm(bias, salience_result=salience, source_id=source_id)
 
     return {
         "citations": citations, "hedging": hedging,
@@ -98,7 +102,8 @@ def _run_pipeline(preprocessed, source_id: str, sections=None) -> dict:
         "framing": framing,     "entropy": entropy,
         "network": network,     "compression": compression,
         "phrases": phrases,     "clusters": clusters,
-        "salience": salience,
+        "salience": salience,   "bias": bias,
+        "llm": llm,
     }
 
 
@@ -106,6 +111,7 @@ def _print_results(p: dict) -> None:
     d, h, c, s = p["density"], p["hedging"], p["citations"], p["sentiment"]
     fr, en, net, comp = p["framing"], p["entropy"], p["network"], p["compression"]
     phrases, clusters, sal = p["phrases"], p["clusters"], p["salience"]
+    bias, llm = p["bias"], p["llm"]
 
     _print_section(
         "EVIDENCE DENSITY",
@@ -159,6 +165,35 @@ def _print_results(p: dict) -> None:
             + "\n".join(f"  `{p.text}`  (freq={p.frequency})" for p in top),
         )
     _print_section(
+        "BIAS PATTERNS",
+        f"Minimization instances  : {bias.minimization_count}  "
+        f"(high severity: {bias.high_severity_count})\n"
+        f"Scope minimizer hits    : {bias.scope_minimizer_count}\n"
+        f"Scrutiny variance       : {bias.scrutiny_variance:.2f}\n"
+        f"Asymmetric pairs        : {len(bias.asymmetry_pairs)}"
+        + (
+            "\n\nTop asymmetric pair:\n  "
+            + bias.asymmetry_pairs[0].signal
+            if bias.asymmetry_pairs else ""
+        )
+        + (
+            "\n\nTop minimization:\n  " + bias.minimization_instances[0].sentence[:200]
+            if bias.minimization_instances else ""
+        ),
+    )
+    if llm.available:
+        _print_section(
+            f"LLM BIAS ANALYSIS  (model: {llm.model_used})",
+            (f"Overall: {llm.overall_assessment}\n\n" if llm.overall_assessment else "")
+            + "\n\n".join(
+                f"[{f.severity.upper()}] {f.manipulation_type}: {f.explanation}\n"
+                f"  > {f.passage[:150]}"
+                for f in llm.findings[:4]
+            ) or "_No manipulation detected in flagged passages._",
+        )
+    elif llm.error and "not set" not in llm.error:
+        print(f"[WARN] LLM analysis: {llm.error}", file=sys.stderr)
+    _print_section(
         "INFORMATION HIERARCHY",
         f"Lede inversion      : {sal.lede_inversion_score:+.4f}  ({sal.lede_inversion_label})\n"
         f"Evidence position   : {sal.mean_evidentiary_position:.1%} through document\n"
@@ -201,6 +236,8 @@ def _save_report(output_path: str, meta, preprocessed, p: dict | None) -> None:
         phrase_result=p["phrases"]          if p else None,
         phrase_clusters=p["clusters"]       if p else None,
         salience_result=p["salience"]       if p else None,
+        bias_result=p["bias"]               if p else None,
+        llm_result=p["llm"]                 if p else None,
     )
     save_report(report, output_path)
 
